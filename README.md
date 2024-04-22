@@ -471,7 +471,7 @@ val_specificity = val_tp/float(val_tp+val_fp)
 print('Validation Specificity: {}'.format(round(val_specificity,2)))
 ```
 
-<img src='imgs/19.png' width=600>
+<img src='imgs/19.png' width=1000>
 
 Let's plot the ROC(Reciever Operating Characteristic Curve) for train and validation data predictions which illustrates the trade-off between the True Positive Rate (TPR) and the False Positive Rate (FPR) at various classification thresholds. 
 
@@ -516,7 +516,7 @@ for i in numbers:
 train_pred_df.head(50)
 ```
 
-<img src='imgs/22.png' width=400>
+<img src='imgs/22.png' width=800>
 
 Now let's calculate accuracy sensitivity and specificity for various probability cutoffs.
 
@@ -550,7 +550,7 @@ train_pred_df['final_preds'] = train_pred_df.pred_prob.apply(lambda x : 1 if x>0
 train_pred_df.head()
 ```
 
-<img src='imgs/25.png' width=500>
+<img src='imgs/25.png' width=1000>
 
 ```python
 
