@@ -198,7 +198,7 @@ df1.shape
 
 Postal code is a very important feature for our prediction, but we do have to clean the data for postal code that we have.
 
-<img src='imgs/5.png' width=1000>
+<img src='imgs/5.png' width=300>
 
 ```python
 empty_zips = list(df1[df1.POSTAL.isnull()].index)
