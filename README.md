@@ -59,15 +59,15 @@ Is_Loyal_Customer - Weather customers are shopping with us rather with our compi
 
 ### Usecase of this prediction ?
 
-- Customer retention :
+- **Customer retention** :
     Predicting churn enables proactive retention strategies, saving costs and preserving valuable clientele for the company.
-- Personalized Marketing: 
+- **Personalized Marketing**: 
     Anticipating churn informs tailored marketing initiatives, offering incentives to retain customers effectively for the company.
-- Customer Lifetime Value: 
+- **Customer Lifetime Value**: 
     Identifying churn risks aids in prioritizing retention efforts on high-value customers, enhancing Saks' long-term revenue and profitability.
-- Resource Allocation: 
+- **Resource Allocation**: 
     Proactive retention efforts allocate resources efficiently, focusing on preserving customers most likely to churn, optimizing Saks' effectiveness.
-- Competitive Advantage: 
+- **Competitive Advantage**: 
     Predicting churn fosters customer loyalty and market share growth, furnishing Saks with a strategic edge in the competitive fashion retail landscape.
 
 ### Process Overview 
@@ -119,7 +119,7 @@ ecom_df.head(3)
 
 <img src='imgs/sample.png' width=1000>
 
-Here, our target varibale is **'CHURNED'** and remove rows whose 'churned' column has null value.
+Here, our target varibale is **'CHURNED'** therefore will remove rows whose 'churned' column has null values.
 
 ```python
 print("Shape of the dataset:",ecom_df.shape)
@@ -127,7 +127,7 @@ ecom_df = ecom_df[~ecom_df['CHURNED'].isnull()]
 print("Null values in target variable:",ecom_df['CHURNED'].isnull().sum())
 ```
 
-<img src='imgs/2.png' width=1000>
+<img src='imgs/2.png' width=300>
 
 #### Handle datatypes for our X variables
 
@@ -147,9 +147,9 @@ for i in in_col:
 ecom_df.shape
 ```
 
-<img src='imgs/3.png' width=1000>
+<img src='imgs/3.png' width=200>
 
-As we focus on predicting the churn likelihood of our e-commerce customers, our prediction model omits store data from consideration.
+As we focus on predicting the churn likelihood of our e-commerce customers, our prediction model we omit store data from consideration.
 
 ```python
 col_l = ['FIRST_ORDERED_DATE','LAST_ORDERED_DATE','ECOM_FIRST_ORDERED_DATE',
@@ -194,7 +194,7 @@ df1 = ecom_df[ecom_df.columns[~ecom_df.columns.isin(col_l)]]
 df1.shape
 ```
 
-<img src='imgs/4.png' width=1000>
+<img src='imgs/4.png' width=300>
 
 Postal code is a very important feature for our prediction, but we do have to clean the data for postal code that we have.
 
@@ -220,7 +220,7 @@ df1 = pd.merge(left = df1,
 
 df1[['POSTAL','POSTAL_NEW','zip']]
 ```
-<img src='imgs/6.png' width=1000>
+<img src='imgs/6.png' width=200>
 
 Create postal groups to reduce dimensionality of the input space and minimizing overfitting. Keep postal group and delete other columns
 
@@ -229,7 +229,7 @@ df2 = df1.drop(columns=['POSTAL','POSTAL_NEW','zip'], errors='ignore')
 df2.postal_group.value_counts()
 ```
 
-<img src='imgs/8.png' width=1000>
+<img src='imgs/8.png' width=200>
 
 ### EDA
 
@@ -266,7 +266,7 @@ Train and validation splits. We are going to use new customers for our test data
 ```python
 test_df = df2[df2['CUST_SEG']=='new']
 test_df.drop('CUST_SEG', axis=1, inplace=True, errors='ignore') 
-
+test_df.to_csv('test_data.csv')
 print(xtrain.shape, xval.shape)
 print(ytrain.shape, yval.shape)
 print(test_df.shape)
@@ -349,7 +349,7 @@ model.compile(optimizer = 'adam',
 model.summary()
 ```
 
-<img src='imgs/11.png' width=1000>
+<img src='imgs/11.png' width=400>
 
 
 Fit our model to our train and validation data.
@@ -387,7 +387,7 @@ train_pred_df
 
 
 
-<img src='imgs/13.png' width=1000>
+<img src='imgs/13.png' width=200>
 
 Do the same operation on validation set
 
@@ -401,7 +401,7 @@ val_pred_df
 ```
 
 
-<img src='imgs/14.png' width=1000>
+<img src='imgs/14.png' width=200>
 
 
 Confusion Matrix for train data prediction
@@ -412,7 +412,7 @@ classes = np.unique(np.concatenate([val_pred_df['actual'], val_pred_df['preds']]
 train_cm = confusion_matrix(train_pred_df['actual'], train_pred_df['preds'], labels=classes)
 ConfusionMatrixDisplay(train_cm, display_labels=classes).plot()
 ```
-<img src='imgs/15.png' width=1000>
+<img src='imgs/15.png' width=300>
 
 Confusion Matrix for validation data prediction
 
@@ -420,7 +420,7 @@ Confusion Matrix for validation data prediction
 val_cm = confusion_matrix(val_pred_df['actual'], val_pred_df['preds'], labels=classes)
 ConfusionMatrixDisplay(val_cm, display_labels=classes).plot()
 ```
-<img src='imgs/16.png' width=1000>
+<img src='imgs/16.png' width=300>
 
 
 ```python
@@ -471,7 +471,7 @@ val_specificity = val_tp/float(val_tp+val_fp)
 print('Validation Specificity: {}'.format(round(val_specificity,2)))
 ```
 
-<img src='imgs/19.png' width=1000>
+<img src='imgs/19.png' width=600>
 
 Let's plot the ROC(Reciever Operating Characteristic Curve) for train and validation data predictions which illustrates the trade-off between the True Positive Rate (TPR) and the False Positive Rate (FPR) at various classification thresholds. 
 
@@ -496,14 +496,14 @@ def draw_roc( actual, probs ):
 fpr, tpr, thresholds = metrics.roc_curve(val_pred_df['actual'], val_pred_df['pred_prob'], drop_intermediate = False )
 draw_roc(train_pred_df['actual'], train_pred_df['pred_prob'])
 ```
-<img src='imgs/20.png' width=1000>
+<img src='imgs/20.png' width=300>
 
 In our case the ROC curve suggests that our model performance is good because the ROC curve that hugs the top-left corner (TPR = 1, FPR = 0) which means its closer the curve is to the top-left corner.
 
 ```python
 draw_roc(val_pred_df['actual'], val_pred_df['pred_prob'])
 ```
-<img src='imgs/21.png' width=1000>
+<img src='imgs/21.png' width=300>
 
 ##### We need to identify the optimum probability cut offs inorder to decide wheather the customer churns or not.
 
@@ -516,7 +516,7 @@ for i in numbers:
 train_pred_df.head(50)
 ```
 
-<img src='imgs/22.png' width=1000>
+<img src='imgs/22.png' width=400>
 
 Now let's calculate accuracy sensitivity and specificity for various probability cutoffs.
 
@@ -533,7 +533,7 @@ for i in numbers:
 print(cutoff_df)
 ```
 
-<img src='imgs/23.png' width=1000>
+<img src='imgs/23.png' width=300>
 
 Let's plot accuracy sensitivity and specificity for various probabilities.
 
@@ -541,7 +541,7 @@ Let's plot accuracy sensitivity and specificity for various probabilities.
 cutoff_df.plot.line(x='prob', y=['accuracy','sensi','speci'])
 plt.show()
 ```
-<img src='imgs/24.png' width=1000>
+<img src='imgs/24.png' width=300>
 
 Now lets use the new optimum probability value to decide wheather the customer churns or not.
 
@@ -550,7 +550,7 @@ train_pred_df['final_preds'] = train_pred_df.pred_prob.apply(lambda x : 1 if x>0
 train_pred_df.head()
 ```
 
-<img src='imgs/25.png' width=1000>
+<img src='imgs/25.png' width=500>
 
 ```python
 
@@ -581,7 +581,7 @@ print('Train ==> Precision: {:.2f} | Recall: {:.2f}\n'.format(train_precision,tr
 print(train_cm)
 ```
 
-<img src='imgs/26.png' width=1000>
+<img src='imgs/26.png' width=300>
 
 Lets find the best probability value once again
 
@@ -593,7 +593,7 @@ plt.legend()
 plt.show()
 ```
 
-<img src='imgs/27.png' width=1000>
+<img src='imgs/27.png' width=300>
 
 ```python
 for i,j,k in zip(thresholds, p[:-1],r[:-1]):
@@ -639,7 +639,7 @@ print('Train ==> Precision: {:.2f} | Recall: {:.2f}\n'.format(train_precision,tr
 print(train_cm)
 
 ```
-<img src='imgs/29.png' width=1000>
+<img src='imgs/29.png' width=300>
 
 ```python
 val_pred_df['final_preds'] = val_pred_df.pred_prob.apply(lambda x : 1 if x>best_cutoff else 0)
@@ -673,7 +673,7 @@ print(val_cm)
 
 ```
 
-<img src='imgs/30.png' width=1000>
+<img src='imgs/30.png' width=300>
 
 
 
