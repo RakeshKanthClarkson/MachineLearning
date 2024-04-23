@@ -90,7 +90,6 @@ from datetime import timedelta
 import warnings
 warnings.filterwarnings('ignore')
 import pickle as pkl
-
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
@@ -107,6 +106,15 @@ import tensorflow as tf
 from keras import metrics
 import pickle as pkl
 import tensorflow.keras.backend as K
+import zipcodes
+from operator import itemgetter
+from tensorflow_addons.metrics import F1Score
+from itertools import chain
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
+import matplotlib.pyplot as plt
+from sklearn import metrics
+from sklearn.metrics import precision_score, recall_score
+from sklearn.metrics import precision_recall_curve
 ```
 
 #### Describe dataset
@@ -232,6 +240,77 @@ df2.postal_group.value_counts()
 <img src='imgs/8.png' width=200>
 
 ### EDA
+
+```python
+df2.isnull().sum().sort_values(ascending=False)
+```
+
+<img src='imgs/31.png' width=200>
+
+We can see we have null values for columns which are related to stores but we have no null values for important columns at he bottom which is good news.
+
+Lets separate Numerical and categorical variables for easy analysis
+
+```python
+cat_cols=df2.select_dtypes(include=['object']).columns
+num_cols = df2.select_dtypes(include=np.number).columns.tolist()
+print("Categorical Variables:")
+print(cat_cols)
+print("Numerical Variables:")
+print(num_cols)
+```
+
+<img src='imgs/32.png' width=600>
+
+Lets look at customer seg distribution
+
+```python
+fig.suptitle('Bar plot for all categorical variables in the dataset')
+sns.countplot(x = 'CUST_SEG', data = df2, color = 'blue', 
+              order = df2['CUST_SEG'].value_counts().index)
+```
+<img src='imgs/33.png' width=600>
+
+Churn vs postal group
+
+```python
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df2, x='postal_group', hue='CHURNED')
+plt.title('Churned Counts by Postal Group')
+plt.xlabel('Postal Group')
+plt.ylabel('Count')
+plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+plt.legend(title='Churned')
+plt.show()
+```
+<img src='imgs/34.png' width=600>
+
+We can see postal code 1 and 9 has more numbers with respect to churn.
+
+Ecom total orders vs Ecom total returns by Churn value
+
+```python
+sns.scatterplot(data=df2, x='ECOM_TOTAL_ORDERS', y='ECOM_RETURNED_ORDERS', hue='CHURNED')
+plt.title('Orders vs Returns')
+plt.xlabel('Ecom total orders')
+plt.ylabel('Returns')
+plt.legend(title='Customer Segment')
+plt.show()
+```
+<img src='imgs/35.png' width=600>
+
+Ecom Total orders by Cancellation
+
+```python
+sns.scatterplot(data=df2, x='ECOM_TOTAL_ORDERS', y='CANCELLED_ORDERS', hue='CHURNED')
+plt.title('Orders vs Cancellations')
+plt.xlabel('Ecom Cancel orders')
+plt.ylabel('Returns')
+plt.legend(title='Orders vs Cancellations')
+plt.show()
+```
+
+<img src='imgs/36.png' width=600>
 
 
 ### Model
