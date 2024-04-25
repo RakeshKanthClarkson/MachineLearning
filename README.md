@@ -166,7 +166,7 @@ ecom_df.shape
 
 <img src='imgs/3.png' width=200>
 
-As we focus on predicting the churn likelihood of our e-commerce customers, our prediction model we omit store data from consideration.
+As we focus on predicting the churn likelihood of our e-commerce customers, we only consider ecom metrics.
 
 ```python
 col_l = ['FIRST_ORDERED_DATE','LAST_ORDERED_DATE','ECOM_FIRST_ORDERED_DATE',
@@ -213,7 +213,7 @@ df1.shape
 
 <img src='imgs/4.png' width=300>
 
-Postal code is a very important feature for our prediction, but we do have to clean the data for postal code that we have.
+Assuming Postal code is an important feature for our prediction, so as a next step we clean the postal code data that we have.
 
 <img src='imgs/5.png' width=300>
 
@@ -248,6 +248,8 @@ df2.postal_group.value_counts()
 
 <img src='imgs/8.png' width=200>
 
+We have grouped invalid postal codes to 999.
+
 ### EDA
 
 ```python
@@ -256,7 +258,7 @@ df2.isnull().sum().sort_values(ascending=False)
 
 <img src='imgs/31.png' width=200>
 
-We can see we have null values for columns which are related to stores but we have no null values for important columns at he bottom which is good news.
+We have aggregated clickstream data at daylevel and customer can be inactive so we can expect null values in clickstream.Whereas we do not have null values in transactiional data.
 
 Lets separate Numerical and categorical variables for easy analysis
 
@@ -303,7 +305,7 @@ sns.scatterplot(data=df2, x='ECOM_TOTAL_ORDERS', y='ECOM_RETURNED_ORDERS', hue='
 plt.title('Orders vs Returns')
 plt.xlabel('Ecom total orders')
 plt.ylabel('Returns')
-plt.legend(title='Customer Segment')
+plt.legend(title='Churn')
 plt.show()
 ```
 <img src='imgs/35.png' width=600>
@@ -315,7 +317,7 @@ sns.scatterplot(data=df2, x='ECOM_TOTAL_ORDERS', y='CANCELLED_ORDERS', hue='CHUR
 plt.title('Orders vs Cancellations')
 plt.xlabel('Ecom Cancel orders')
 plt.ylabel('Returns')
-plt.legend(title='Orders vs Cancellations')
+plt.legend(title='Churn')
 plt.show()
 ```
 
