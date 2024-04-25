@@ -92,6 +92,7 @@ from datetime import timedelta
 import warnings
 warnings.filterwarnings('ignore')
 import pickle as pkl
+
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
@@ -117,6 +118,8 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import precision_recall_curve
+pd.set_option('display.max_rows', None)
+import seaborn as sns
 ```
 
 #### Describe dataset
