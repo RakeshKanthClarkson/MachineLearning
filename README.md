@@ -43,10 +43,12 @@ Recency - How recent a customer has shopped represented in days.
 
 Cust_Seg :
 
-    - Reactive
-    - lapsed
-    - new
-    - existing 
+    - new : A customer who has a transaction in last 12 months and did no shop with us anytime before.
+    - existing : A customer who has shopped with us last year as well as this year (last 12 months)
+    - Reactive : Customer who has shopped long before and re-activated in this year. 
+    - lapsed : An exiting Customer who has not shopped in last 12 months.
+    
+    
 
 Clickstream data: 
 
@@ -128,6 +130,10 @@ ecom_df.head(3)
 <img src='imgs/sample.png' width=1000>
 
 Here, our target varibale is **'CHURNED'** therefore will remove rows whose 'churned' column has null values.
+
+How do we define Churn ?
+
+Customers who has not shopped with us for the past 12 months are labelled as Churned.
 
 ```python
 print("Shape of the dataset:",ecom_df.shape)
