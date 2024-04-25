@@ -310,7 +310,10 @@ plt.show()
 ```
 <img src='imgs/35.png' width=600>
 
+This graph depicts the customer who has made less orders and whose returns is below 10 are more likely to be churned.
+
 Ecom Total orders by Cancellation
+
 
 ```python
 sns.scatterplot(data=df2, x='ECOM_TOTAL_ORDERS', y='CANCELLED_ORDERS', hue='CHURNED')
@@ -324,6 +327,8 @@ plt.show()
 <img src='imgs/36.png' width=600>
 
 
+This graph depicts customer who did not cancel the order and placed a return order are more likely to be churned.
+
 ### Model
 
 Encode our target variable to 0 and 1.
@@ -333,7 +338,7 @@ df2.CHURNED.replace({'YES': 1, 'NO': 0}, inplace = True)
 print(df2.CHURNED.unique(), df2.CUST_SEG.unique())
 ```
 
-Create train data, we are not including new customers because they have shopped us for the first time and we will be using them for out test data.
+Create train data, we are not including new customers because they have shopped us for the first time and we will be using them for testing and scoring.We are more interested to see wheather our new customers are going to churn or not.This is more like A/B testing.
 
 ```python
 train_df = df2[df2['CUST_SEG'] != 'new']
@@ -466,6 +471,16 @@ val_preds = model.predict(xval)
 
 Let's check our predicted output vs actuals
 
+We have used three methods to choose a best cut-off point on predicted probabilities.
+
+- 0.5 as a cut-off 
+- 0,0.05,0.1,0.15,0.2.... and so on as cut-off points.
+- Using precision recall tradeoff.
+
+*Note: We will apply all these methods on validation and train data to check the accuracy.*
+
+1. **0.5 as a cut-off**
+
 ```python
 train_pred_df = pd.DataFrame({'actual' : ytrain,
              'pred_prob' : list(map(itemgetter(0), train_preds))
@@ -475,11 +490,12 @@ train_pred_df['preds'] = train_pred_df.pred_prob.apply(lambda x : 1 if x>0.5 els
 train_pred_df
 ```
 
-
-
 <img src='imgs/13.png' width=200>
 
 Do the same operation on validation set
+
+**As a baseline model we are using 0.5 as a cutoff probability to classify churn.**
+
 
 ```python
 val_pred_df = pd.DataFrame({'actual' : yval,
@@ -597,6 +613,9 @@ draw_roc(val_pred_df['actual'], val_pred_df['pred_prob'])
 
 ##### We need to identify the optimum probability cut offs inorder to decide wheather the customer churns or not.
 
+
+2. **0,0.05,0.1,0.15,0.2.... and so on as cut-off points.**
+
 So let's create columns with different probability cutoffs.
 
 ```python
@@ -673,7 +692,9 @@ print(train_cm)
 
 <img src='imgs/26.png' width=300>
 
-Lets find the best probability value once again
+
+3. **Using precision recall tradeoff**
+
 
 ```python
 p, r, thresholds = precision_recall_curve(train_pred_df['actual'], train_pred_df['pred_prob'])
@@ -764,6 +785,13 @@ print(val_cm)
 ```
 
 <img src='imgs/30.png' width=300>
+
+
+
+### Conclusion
+
+*The best cut-off point is 0.65 with the precision at max 0.93 and recall at max 0.93. By this cut-off point we have achieved 89% accuracy on training data and 89% for our validation dataset, F1 score is 0.93 and 0.93 for training and validation respectively.*
+
 
 
 
